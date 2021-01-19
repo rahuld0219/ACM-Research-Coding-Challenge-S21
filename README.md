@@ -1,24 +1,12 @@
-# ACM Research Coding Challenge (Spring 2021)
+# ACM Research Coding Challenge (Spring 2021) - Rahul Das
 
-## No Collaboration Policy
+To solve this problem I used Python with the Biopython library which had the SeqIO package I used to handle parsing the GenBank file and the GenomeDiagram package i used to handle creating the map itself. GenomeDiagram, however, can only create PDFs and a few other file formats, not bitmap image formats, so for that I used the ReportLab library which Biopython works in tandem with to export the diagram to the JPG format.
+Note:Biopython requires Numpy to run and ReportLab is optional(used here for bitmap capabilities)
 
-**You may not collaborate with anyone on this challenge.** You _are_ allowed to use Internet documentation. If you _do_ use existing code (either from Github, Stack Overflow, or other sources), **please cite your sources in the README**.
+Reference: https://biopython.org/docs/1.75/api/index.html
 
-## Submission Procedure
+General overview: First I used the SeqIO package to parse the GenBank file and then fed that parsed sequence feature data into the GenomeDiagram package's featureset object, then that set into a track, and then that track into a diagram. When parsing through the feature data I checked for the features to be the CDS type because there is also one "source" type that has a range of the entire sequence so that would add one whole bar I didn't want. I also excluded the "gene" type because the matching "gene" and "CDS" types both have the same ranges so there was no point in adding them each twice. I then drew the diagram and wrote it to the file.
 
-Please follow the below instructions on how to submit your answers.
+I chose to split my code into functions mainly because it's just a habit I've developed over time from my CS classes. I understand that it doesn't really matter in this case because this code will only run once but I decided to do it anyways.
 
-1. Create a **public** fork of this repo and name it `ACM-Research-Coding-Challenge-S21`. To fork this repo, click the button on the top right and click the "Fork" button.
-2. Clone the fork of the repo to your computer using `git clone [the URL of your clone]`. You may need to install Git for this (Google it).
-3. Complete the Challenge based on the instructions below.
-4. Submit your solution by filling out this [form](https://acmutd.typeform.com/to/uqAJNXUe).
-
-## Question One
-
-Genome analysis is the identification of genomic features such as gene expression or DNA sequences in an individual's genetic makeup. A genbank file (.gb) format contains information about an individual's DNA sequence. The following dataset in `Genome.gb` contains a complete genome sequence of Tomato Curly Stunt Virus. 
-
-**With this file, create a circular genome map and output it as a JPG/PNG/JPEG format.** We're not looking for any complex maps, just be sure to highlight the features and their labels.
-
-**You may use any programming language you feel most comfortable. We recommend Python because it is the easiest to implement. You're allowed to use any library you want to implement this**, just document which ones you used in this README file. Try to complete this as soon as possible.
-
-Regardless if you can or cannot answer the question, provide a short explanation of how you got your solution or how you think it can be solved in your README.md file. However, we highly recommend giving the challenge a try, you just might learn something new!
+One thing that interested me was how the ranges for the features would often overlap with the ranges for other features. This gave me the issue that sometimes one end of the bars would get obscured so it became hard to tell exactly where the features began or ended. I considered just turning my code in as it was because the labels did line up with the endpoint of each obscured section, however I didn't feel like that would be an accurate enough indicator. I spent a long time poring through the API until I realized that instead of forcing the boxes to work to my favor I could just try one of the different shapes GenomeDiagram offers. I decided to use the arrows instead of the default box. There is more control over the shape and size of the arrows than the box so I used that to my advantage and made the arrows alternating thicknesses so it would be easier to see the endpoints of the boxes. I would like to note however, that this sizing equation I made is very simple and was optimized for this specific genome and it is still possible that other sequences could have some obscured ends, however I think that my approach would work well for most other sequences.
